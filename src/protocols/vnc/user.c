@@ -32,6 +32,7 @@
 #include "pulse/pulse.h"
 #endif
 
+#include <guacamole/argv.h>
 #include <guacamole/audio.h>
 #include <guacamole/client.h>
 #include <guacamole/socket.h>
@@ -94,6 +95,9 @@ int guac_vnc_user_join_handler(guac_user* user, int argc, char** argv) {
         /* General mouse/keyboard events */
         user->mouse_handler = guac_vnc_user_mouse_handler;
         user->key_handler = guac_vnc_user_key_handler;
+
+        /* Updates to connection parameters */
+        user->argv_handler = guac_argv_handler;
 
         /* Inbound (client to server) clipboard transfer */
         if (!settings->disable_paste)

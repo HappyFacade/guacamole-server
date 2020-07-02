@@ -19,6 +19,7 @@
 
 #include "config.h"
 
+#include "argv.h"
 #include "common/recording.h"
 #include "client.h"
 #include "user.h"
@@ -34,6 +35,7 @@
 #include "pulse/pulse.h"
 #endif
 
+#include <guacamole/argv.h>
 #include <guacamole/client.h>
 
 #include <stdlib.h>
@@ -56,6 +58,9 @@ int guac_client_init(guac_client* client) {
     client->leave_handler = guac_vnc_user_leave_handler;
     client->free_handler = guac_vnc_client_free_handler;
 
+    /* Register handlers for argument values that may be sent after the handshake */
+    guac_argv_register(GUAC_VNC_ARGV_PASSWORD, guac_vnc_receive_credentials, NULL, GUAC_ARGV_OPTION_ONCE);
+
     return 0;
 }
 
@@ -63,6 +68,9 @@ int guac_vnc_client_free_handler(guac_client* client) {
 
     guac_vnc_client* vnc_client = (guac_vnc_client*) client->data;
     guac_vnc_settings* settings = vnc_client->settings;
+
+    /* Unblock credential request, if active */
+    guac_argv_stop();
 
     /* Clean up VNC client*/
     rfbClient* rfb_client = vnc_client->rfb_client;

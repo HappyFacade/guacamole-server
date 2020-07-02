@@ -20,40 +20,28 @@
 #include "config.h"
 
 #include "argv.h"
-#include "auth.h"
 #include "vnc.h"
 
-#include <guacamole/argv.h>
 #include <guacamole/client.h>
-#include <rfb/rfbclient.h>
-#include <rfb/rfbproto.h>
+#include <guacamole/user.h>
 
+#include <stdlib.h>
 #include <string.h>
 
-char* guac_vnc_get_password(rfbClient* client) {
+int guac_vnc_receive_credentials(guac_user* user, const char* mimetype,
+        const char* name, const char* value, void* data) {
 
-    guac_client* gc = rfbClientGetClientData(client, GUAC_VNC_CLIENT_KEY);
-    guac_vnc_client* vnc_client = (guac_vnc_client*) gc->data;
+    guac_client* client = user->client;
+    guac_vnc_client* vnc_client = (guac_vnc_client*) client->data;
     guac_vnc_settings* settings = vnc_client->settings;
 
-    int num_required = 0;
-    const char* required_params[4];
-
-    /* Build list of required credentials based on which settings were provided */
-    if (settings->password == NULL || strcmp(settings->password, "") == 0)
-        required_params[num_required++] = GUAC_VNC_ARGV_PASSWORD;
-
-    /* Terminate list of required credentials */
-    required_params[num_required] = NULL;
-
-    /* Request any required credentials */
-    if (num_required > 0) {
-        guac_client_log(gc, GUAC_LOG_INFO, "Prompting for required credentials.");
-        guac_client_owner_send_required(gc, required_params);
-        guac_argv_await(required_params);
+    /* Update password */
+    if (strcmp(name, GUAC_VNC_ARGV_PASSWORD) == 0) {
+        free(settings->password);
+        settings->password = strdup(value);
     }
 
-    return settings->password;
+    return 0;
 
 }
 
