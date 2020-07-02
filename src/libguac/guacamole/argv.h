@@ -20,6 +20,20 @@
 #ifndef GUAC_ARGV_H
 #define GUAC_ARGV_H
 
+/* WARNING: This header is slated to be introduced in Apache Guacamole 1.3.0.
+ *
+ * It is possible for Glyptodon Enterprise to include this header within
+ * Glyptodon Enterprise 2.x while maintaining backward compatibility with
+ * Apache Guacamole 1.1.0 release, however third-party code which builds
+ * against this header will NOT be compatible with Apache Guacamole 1.1.0.
+ *
+ * If you are certain that you wish to use this header, define the GLEN_SOURCE
+ * macro.
+ */
+#ifndef GLEN_SOURCE
+#error The <guacamole/string.h> header cannot be used without breaking strict API/ABI compatibility with Apache Guacamole 1.1.0.
+#endif
+
 /**
  * Convenience functions for processing parameter values that are submitted
  * dynamically using "argv" instructions.
