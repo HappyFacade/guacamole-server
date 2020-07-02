@@ -17,6 +17,7 @@
  * under the License.
  */
 
+#include "argv.h"
 #include "client.h"
 #include "channels/audio-input/audio-buffer.h"
 #include "channels/cliprdr.h"
@@ -35,6 +36,7 @@
 #include "common-ssh/user.h"
 #endif
 
+#include <guacamole/argv.h>
 #include <guacamole/audio.h>
 #include <guacamole/client.h>
 
@@ -161,6 +163,11 @@ int guac_client_init(guac_client* client, int argc, char** argv) {
     /* Set handlers */
     client->join_handler = guac_rdp_user_join_handler;
     client->free_handler = guac_rdp_client_free_handler;
+
+    /* Register handlers for argument values that may be sent after the handshake */
+    guac_argv_register(GUAC_RDP_ARGV_DOMAIN, guac_rdp_receive_credentials, NULL, GUAC_ARGV_OPTION_ONCE);
+    guac_argv_register(GUAC_RDP_ARGV_USERNAME, guac_rdp_receive_credentials, NULL, GUAC_ARGV_OPTION_ONCE);
+    guac_argv_register(GUAC_RDP_ARGV_PASSWORD, guac_rdp_receive_credentials, NULL, GUAC_ARGV_OPTION_ONCE);
 
 #ifdef ENABLE_COMMON_SSH
     guac_common_ssh_init(client);

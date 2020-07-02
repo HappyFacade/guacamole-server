@@ -17,6 +17,7 @@
  * under the License.
  */
 
+#include "argv.h"
 #include "common/string.h"
 #include "config.h"
 #include "resolution.h"
@@ -40,9 +41,9 @@
 const char* GUAC_RDP_CLIENT_ARGS[] = {
     "hostname",
     "port",
-    "domain",
-    "username",
-    "password",
+    GUAC_RDP_ARGV_DOMAIN,
+    GUAC_RDP_ARGV_USERNAME,
+    GUAC_RDP_ARGV_PASSWORD,
     "width",
     "height",
     "dpi",
@@ -1144,18 +1145,7 @@ static int guac_rdp_get_performance_flags(guac_rdp_settings* guac_settings) {
 
 }
 
-/**
- * Simple wrapper for strdup() which behaves identically to standard strdup(),
- * execpt that NULL will be returned if the provided string is NULL.
- *
- * @param str
- *     The string to duplicate as a newly-allocated string.
- *
- * @return
- *     A newly-allocated string containing identically the same content as the
- *     given string, or NULL if the given string was NULL.
- */
-static char* guac_rdp_strdup(const char* str) {
+char* guac_rdp_strdup(const char* str) {
 
     /* Return NULL if no string provided */
     if (str == NULL)

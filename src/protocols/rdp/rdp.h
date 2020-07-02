@@ -70,6 +70,24 @@ typedef struct guac_rdp_client {
     guac_rdp_settings* settings;
 
     /**
+     * Pointer to the FreeRDP setting which should receive the user's domain.
+     * This value only has meaning if authentication is currently in progress.
+     */
+    char** prompt_domain;
+
+    /**
+     * Pointer to the FreeRDP setting which should receive the user's username.
+     * This value only has meaning if authentication is currently in progress.
+     */
+    char** prompt_username;
+
+    /**
+     * Pointer to the FreeRDP setting which should receive the user's password.
+     * This value only has meaning if authentication is currently in progress.
+     */
+    char** prompt_password;
+
+    /**
      * Button mask containing the OR'd value of all currently pressed buttons.
      */
     int mouse_button_mask;

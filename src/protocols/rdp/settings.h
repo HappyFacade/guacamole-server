@@ -632,5 +632,18 @@ int guac_rdp_get_height(freerdp* rdp);
  */
 int guac_rdp_get_depth(freerdp* rdp);
 
+/**
+ * Simple wrapper for strdup() which behaves identically to standard strdup(),
+ * execpt that NULL will be returned if the provided string is NULL.
+ *
+ * @param str
+ *     The string to duplicate as a newly-allocated string.
+ *
+ * @return
+ *     A newly-allocated string containing identically the same content as the
+ *     given string, or NULL if the given string was NULL.
+ */
+char* guac_rdp_strdup(const char* str);
+
 #endif
 

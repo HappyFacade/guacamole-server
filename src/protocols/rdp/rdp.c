@@ -17,6 +17,7 @@
  * under the License.
  */
 
+#include "argv.h"
 #include "beep.h"
 #include "bitmap.h"
 #include "channels/audio-input/audio-buffer.h"
@@ -200,9 +201,7 @@ BOOL rdp_freerdp_pre_connect(freerdp* instance) {
 
 /**
  * Callback invoked by FreeRDP when authentication is required but a username
- * and password has not already been given. In the case of Guacamole, this
- * function always succeeds but does not populate the usename or password. The
- * username/password must be given within the connection parameters.
+ * and password has not already been given.
  *
  * @param instance
  *     The FreeRDP instance associated with the RDP session requesting
@@ -226,10 +225,35 @@ static BOOL rdp_freerdp_authenticate(freerdp* instance, char** username,
 
     rdpContext* context = instance->context;
     guac_client* client = ((rdp_freerdp_context*) context)->client;
+    guac_rdp_client* rdp_client = (guac_rdp_client*) client->data;
+    guac_rdp_settings* settings = rdp_client->settings;
 
-    /* Warn if connection is likely to fail due to lack of credentials */
-    guac_client_log(client, GUAC_LOG_INFO,
-            "Authentication requested but username or password not given");
+    int num_required = 0;
+    const char* required_params[4];
+
+    /* Store locations to receive prompt values */
+    rdp_client->prompt_domain = domain;
+    rdp_client->prompt_username = username;
+    rdp_client->prompt_password = password;
+
+    /* Build list of required credentials based on which settings were provided */
+    if (settings->domain == NULL || strcmp(settings->domain, "") == 0)
+        required_params[num_required++] = GUAC_RDP_ARGV_DOMAIN;
+    if (settings->username == NULL || strcmp(settings->username, "") == 0)
+        required_params[num_required++] = GUAC_RDP_ARGV_USERNAME;
+    if (settings->password == NULL || strcmp(settings->password, "") == 0)
+        required_params[num_required++] = GUAC_RDP_ARGV_PASSWORD;
+
+    /* Terminate list of required credentials */
+    required_params[num_required] = NULL;
+
+    /* Request any required credentials */
+    if (num_required > 0) {
+        guac_client_log(client, GUAC_LOG_INFO, "Prompting for required credentials.");
+        guac_client_owner_send_required(client, required_params);
+        guac_argv_await(required_params);
+    }
+
     return TRUE;
 
 }
