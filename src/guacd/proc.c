@@ -327,6 +327,9 @@ static void guacd_exec_proc(guacd_proc* proc, const char* protocol) {
         goto cleanup_client;
     }
 
+    /* Enable keep alive on the broadcast socket */
+    guac_socket_require_keep_alive(client->socket);
+
     /* The first file descriptor is the owner */
     int owner = 1;
 
@@ -341,9 +344,6 @@ static void guacd_exec_proc(guacd_proc* proc, const char* protocol) {
 
     }
     
-    /* Enable keep alive on the broadcast socket */
-    guac_socket_require_keep_alive(client->socket);
-
 cleanup_client:
 
     /* Request client to stop/disconnect */
