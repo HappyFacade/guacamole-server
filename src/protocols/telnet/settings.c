@@ -19,6 +19,7 @@
 
 #include "config.h"
 
+#include "argv.h"
 #include "settings.h"
 
 #include <guacamole/user.h>
@@ -37,9 +38,9 @@ const char* GUAC_TELNET_CLIENT_ARGS[] = {
     "username-regex",
     "password",
     "password-regex",
-    "font-name",
-    "font-size",
-    "color-scheme",
+    GUAC_TELNET_ARGV_FONT_NAME,
+    GUAC_TELNET_ARGV_FONT_SIZE,
+    GUAC_TELNET_ARGV_COLOR_SCHEME,
     "typescript-path",
     "typescript-name",
     "create-typescript-path",
