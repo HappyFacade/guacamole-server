@@ -500,7 +500,9 @@ static void* guac_client_owner_send_required_callback(guac_user* user, void* dat
     const char** required = (const char **) data;
     
     /* Send required parameters to owner. */
-    return (void*) ((intptr_t) guac_protocol_send_required(user->socket, required));
+    int retval = guac_protocol_send_required(user->socket, required);
+    guac_socket_flush(user->socket);
+    return (void*) ((intptr_t) retval);
     
 }
 
