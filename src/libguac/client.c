@@ -507,13 +507,7 @@ static void* guac_client_owner_send_required_callback(guac_user* user, void* dat
 }
 
 int guac_client_owner_send_required(guac_client* client, const char** required) {
-
-    /* Don't send required instruction if client does not support it. */
-    if (!guac_client_owner_supports_required(client))
-        return -1;
-    
     return (int) ((intptr_t) guac_client_for_owner(client, guac_client_owner_send_required_callback, required));
-
 }
 
 /**
